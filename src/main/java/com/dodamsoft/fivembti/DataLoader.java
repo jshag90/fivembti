@@ -1,14 +1,18 @@
 package com.dodamsoft.fivembti;
 
+import com.dodamsoft.fivembti.entity.MBTIResults;
 import com.dodamsoft.fivembti.entity.Question;
+import com.dodamsoft.fivembti.repository.MBTIResultsRepository;
 import com.dodamsoft.fivembti.repository.QuestionRepository;
 import com.dodamsoft.fivembti.util.Dimension;
+import com.dodamsoft.fivembti.util.MbtiTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -16,10 +20,17 @@ import java.util.List;
 public class DataLoader implements CommandLineRunner {
 
     private final QuestionRepository questionRepository;
+    private final MBTIResultsRepository mbtiResultsRepository;
 
     @Override
     public void run(String... args) {
-        if (questionRepository.count() > 0) return;
+        initQuestions();
+        initMBTIResults();
+    }
+
+    private void initQuestions() {
+        if (questionRepository.count() > 0)
+            return;
 
         // Define question templates for each dimension
         List<String> eiQuestions = generateEIQuestions();
@@ -56,6 +67,150 @@ public class DataLoader implements CommandLineRunner {
 
         System.out.println("✅ 질문 400개 자동 생성 완료");
     }
+
+    private void initMBTIResults() {
+        if (mbtiResultsRepository.count() > 0)
+            return;
+
+        List<MBTIResults> mbtiResultsList = new ArrayList<>();
+
+        for (MbtiTypeEnum mbtiTypeEnum : MbtiTypeEnum.values()) {
+            switch (mbtiTypeEnum) {
+                case ISTJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ISTJ)
+                        .typeNickName("청렴결백한 논리주의자")
+                        .description("신뢰할 수 있고 책임감이 강하며, 전통과 질서를 중시하는 현실주의자입니다.")
+                        .similarCelebrities("아이린, 성훈, 쯔위, 김성규, 시우민")
+                        .famousCelebrities("톰 행크스, 앤절리나 졸리, 톰 브래디, 엠마 왓슨, 제프 베조스")
+                        .historicalFigures("조지 워싱턴, 에이브러햄 링컨, 나폴레옹, 베토벤, 뉴턴")
+                        .build());
+                case ISFJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ISFJ)
+                        .typeNickName("용감한 수호자")
+                        .description("성실하고 인내심이 강하며, 타인을 도우려는 의지가 강한 헌신적인 사람입니다.")
+                        .similarCelebrities("비욘세, 나재민, 스티븐 연, 조던 피터슨, 메그 비셔스")
+                        .famousCelebrities("오프라 윈프리, 윌 스미스, 비욘세, 레오나르도 디카프리오, 샤론 스톤")
+                        .historicalFigures("마더 테레사, 간디, 플라톤, 셰익스피어, 링컨")
+                        .build());
+                case INFJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.INFJ)
+                        .typeNickName("통찰력 있는 조언자")
+                        .description("직관적이고 깊이 있는 사고를 지닌 이상주의자로, 타인의 감정에 민감합니다.")
+                        .similarCelebrities("김이나, 남주혁, 태양, 차은우, 태연")
+                        .famousCelebrities("오프라 윈프리, 엘론 머스크, 앨버트 아인슈타인, 말랄라 유사프자이, 빌 게이츠")
+                        .historicalFigures("요한 세바스티안 바흐, 마틴 루터 킹 주니어, 간디, 프로이트, 칸트")
+                        .build());
+                case INTJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.INTJ)
+                        .typeNickName("전략적인 계획가")
+                        .description("분석적이고 전략적인 사고를 바탕으로 목표를 향해 나아가는 리더형 인물입니다.")
+                        .similarCelebrities("강동원, 윤하, 손나은, 이경규, 미노이")
+                        .famousCelebrities("스티브 잡스, 일론 머스크, 마크 저커버그, 힐러리 클린턴, 오프라 윈프리")
+                        .historicalFigures("레오나르도 다 빈치, 아이작 뉴턴, 찰스 다윈, 마키아벨리, 토마스 제퍼슨")
+                        .build());
+                case ISTP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ISTP)
+                        .typeNickName("만능 재주꾼")
+                        .description("논리적이며 분석적인 사고를 가진 실용적인 문제 해결사입니다.")
+                        .similarCelebrities("박명수, 슈가, 은지원, 주우재, 홍진경")
+                        .famousCelebrities("클린트 이스트우드, 해리슨 포드, 마이클 조던, 드웨인 존슨, 톰 크루즈")
+                        .historicalFigures("벤저민 프랭클린, 알렉산더 그레이엄 벨, 나폴레옹, 윈스턴 처칠, 갈릴레이")
+                        .build());
+                case ISFP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ISFP)
+                        .typeNickName("호기심 많은 예술가")
+                        .description("감성적이고 겸손하며, 조용한 환경에서 자신만의 방식으로 세상을 즐깁니다.")
+                        .similarCelebrities("유재석, 정국, 주현영, 홍은채, 권정열")
+                        .famousCelebrities("마릴린 먼로, 프레디 머큐리, 비욘세, 크리스티나 아길레라, 레이디 가가")
+                        .historicalFigures("빈센트 반 고흐, 모차르트, 에디트 피아프, 클레오파트라, 프리다 칼로")
+                        .build());
+                case INFP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.INFP)
+                        .typeNickName("열정적인 중재자")
+                        .description("자신의 신념에 충실하고, 이상을 추구하는 감성적이며 내성적인 성격입니다.")
+                        .similarCelebrities("아이유, 선미, 존박, 조이, 예리")
+                        .famousCelebrities("윌리엄 셰익스피어, 조니 뎁, 조앤 롤링, 프레드릭 니체, 버락 오바마")
+                        .historicalFigures("예수 그리스도, 간디, 레프 톨스토이, 에밀리 디킨슨, 카를 융")
+                        .build());
+                case INTP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.INTP)
+                        .typeNickName("논리적인 사색가")
+                        .description("호기심이 많고 혁신적인 사고를 가진 분석가이며, 지적 탐구를 즐깁니다.")
+                        .similarCelebrities("유재석, 김종국, 고아성, 권나라, 서인국")
+                        .famousCelebrities("빌 게이츠, 스티브 잡스, 알베르트 아인슈타인, 칼 세이건, 리처드 파인만")
+                        .historicalFigures("소크라테스, 데카르트, 아리스토텔레스, 뉴턴, 갈릴레오")
+                        .build());
+                case ESTP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ESTP)
+                        .typeNickName("모험을 즐기는 사업가")
+                        .description("에너지 넘치고 현실적인 감각이 뛰어나며, 즉각적인 행동을 선호합니다.")
+                        .similarCelebrities("김종국, 이효리, 박재범, 제시, 현아")
+                        .famousCelebrities("도널드 트럼프, 드웨인 존슨, 샤를리즈 테론, 비욘세, 셀레나 고메즈")
+                        .historicalFigures("줄리어스 시저, 알렉산더 대왕, 나폴레옹, 카이사르, 클레오파트라")
+                        .build());
+                case ESFP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ESFP)
+                        .typeNickName("자유로운 연예인")
+                        .description("사교적이고 유쾌하며, 타인과 함께하는 활동을 즐깁니다.")
+                        .similarCelebrities("박보영, 장원영, 유아, 산다라박, 하니")
+                        .famousCelebrities("마일리 사이러스, 리한나, 저스틴 비버, 케이티 페리, 브루노 마스")
+                        .historicalFigures("찰리 채플린, 아멜리아 이어하트, 마리 퀴리, 헬렌 켈러, 안네 프랑크")
+                        .build());
+                case ENFP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ENFP)
+                        .typeNickName("재기발랄한 활동가")
+                        .description("창의적이고 열정적이며, 새로운 아이디어와 가능성에 매료되는 낙천주의자입니다.")
+                        .similarCelebrities("박보검, 수지, 박나래, 유노윤호, 김세정")
+                        .famousCelebrities("로빈 윌리엄스, 짐 캐리, 엘렌 드제너러스, 오프라 윈프리, 윌 스미스")
+                        .historicalFigures("벤자민 프랭클린, 헨리 데이비드 소로우, 마야 안젤루, 갈릴레이, 니체")
+                        .build());
+                case ENTP -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ENTP)
+                        .typeNickName("뜨거운 논쟁을 즐기는 변론가")
+                        .description("재치 있고 분석적인 성격으로, 도전과 논쟁을 즐기며 창의적인 해결책을 제시합니다.")
+                        .similarCelebrities("김구라, 박명수, 장도연, 유병재, 김희철")
+                        .famousCelebrities("마크 트웨인, 벤자민 프랭클린, 토머스 에디슨, 스티브 잡스, 엘론 머스크")
+                        .historicalFigures("소크라테스, 플라톤, 아리스토텔레스, 갈릴레이, 뉴턴")
+                        .build());
+                case ESTJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ESTJ)
+                        .typeNickName("엄격한 관리자")
+                        .description("현실적이고 체계적인 사고를 지니며, 조직 내 질서를 유지하는 데 능숙합니다.")
+                        .similarCelebrities("차승원, 김희애, 박진영, 김성주, 이경규")
+                        .famousCelebrities("조지 워싱턴, 마거릿 대처, 앙겔라 메르켈, 힐러리 클린턴, 잭 웰치")
+                        .historicalFigures("나폴레옹, 윈스턴 처칠, 아브라함 링컨, 세종대왕, 칭기즈 칸")
+                        .build());
+                case ESFJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ESFJ)
+                        .typeNickName("사교적인 외교관")
+                        .description("다정하고 친절하며, 타인을 도우려는 성향이 강한 협력적인 인물입니다.")
+                        .similarCelebrities("정해인, 수영, 이승기, 박서준, 소이현")
+                        .famousCelebrities("테일러 스위프트, 앤 해서웨이, 휴 그랜트, 제니퍼 가너, 윌 스미스")
+                        .historicalFigures("마더 테레사, 엘리자베스 여왕, 알버트 슈바이처, 플로렌스 나이팅게일, 넬슨 만델라")
+                        .build());
+                case ENFJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ENFJ)
+                        .typeNickName("정의로운 사회운동가")
+                        .description("타인을 이끄는 강한 리더십과 공감 능력을 지닌 열정적인 이상주의자입니다.")
+                        .similarCelebrities("이효리, 김연아, 차은우, 송혜교, 하정우")
+                        .famousCelebrities("버락 오바마, 엠마 왓슨, 윌 스미스, 마틴 루터 킹, 넬슨 만델라")
+                        .historicalFigures("간디, 플라톤, 칸트, 루소, 세종대왕")
+                        .build());
+                case ENTJ -> mbtiResultsList.add(MBTIResults.builder()
+                        .typeEnum(MbtiTypeEnum.ENTJ)
+                        .typeNickName("대담한 통솔자")
+                        .description("결단력 있고 통솔력 있는 지도자형 인물로, 전략적으로 목표를 달성합니다.")
+                        .similarCelebrities("정우성, 김혜수, 손석희, 박찬호, 한가인")
+                        .famousCelebrities("고든 램지, 스티브 잡스, 마거릿 대처, 프랭클린 루즈벨트, 베토벤")
+                        .historicalFigures("줄리어스 시저, 알렉산더 대왕, 아이작 뉴턴, 칭기즈 칸, 에이브러햄 링컨")
+                        .build());
+            }
+        }
+
+        mbtiResultsRepository.saveAll(mbtiResultsList);
+
+    }
+
 
     private List<String> generateEIQuestions() {
         List<String> questions = new ArrayList<>();
@@ -378,9 +533,7 @@ public class DataLoader implements CommandLineRunner {
                 "공정함과 객관성을 위해 감정을 억제하나요?"
         };
 
-        for (String template : templates) {
-            questions.add(template);
-        }
+        Collections.addAll(questions, templates);
         return questions;
     }
 
