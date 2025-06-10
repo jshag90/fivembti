@@ -5,6 +5,7 @@ import com.dodamsoft.fivembti.service.FiveMbtiService;
 import com.dodamsoft.fivembti.util.Dimension;
 import com.dodamsoft.fivembti.util.MbtiTypeEnum;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class FiveMbtiController {
 
     private final FiveMbtiService fiveMbtiService;
@@ -24,6 +26,7 @@ public class FiveMbtiController {
 
     @GetMapping("/results/{type}")
     public ResponseEntity<MBTIResults> getResultsByType(@PathVariable("type") String type) {
+        log.info(type);
         MbtiTypeEnum mbtiTypeEnum = MbtiTypeEnum.valueOf(type.toUpperCase());
         MBTIResults result = fiveMbtiService.getMBTIResultByType(mbtiTypeEnum);
         return ResponseEntity.ok(result);
