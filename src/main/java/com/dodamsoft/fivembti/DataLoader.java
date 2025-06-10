@@ -320,7 +320,7 @@ public class DataLoader implements CommandLineRunner {
         return questions;
     }
 
-
+    //TODO 질문 100가지 작성 수정 필요
     private List<String> generateNSQuestions() {
         List<String> questions = new ArrayList<>();
         String[] templates = {
